@@ -24,46 +24,45 @@ public class PlayerControler : MonoBehaviour {
         {
             transform.Translate(Vector3.back * speed * Time.deltaTime);
             transform.Translate(Vector3.left * speed * Time.deltaTime);
-            playerMesh.transform.rotation = new Quaternion(0, 0.4f, 0, 0.9f);
+            playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, 0.4f, 0, 0.9f), Time.deltaTime * 10f);
         }
         else if (Input.GetKey("d") && Input.GetKey("s"))
         {
             transform.Translate(Vector3.left * speed * Time.deltaTime);
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            playerMesh.transform.rotation = new Quaternion(0, 0.9f, 0, 0.4f);
+            playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, 0.9f, 0, 0.4f), Time.deltaTime * 10f);
         }
         else if (Input.GetKey("s") && Input.GetKey("a"))
         {
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
             transform.Translate(Vector3.right * speed * Time.deltaTime);
-            playerMesh.transform.rotation = new Quaternion(0, 0.9f, 0, -0.4f);
+            playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, 0.9f, 0, -0.4f), Time.deltaTime * 10f);
         }
         else if (Input.GetKey("a") && Input.GetKey("w"))
         {
             transform.Translate(Vector3.right * speed * Time.deltaTime);
             transform.Translate(Vector3.back * speed * Time.deltaTime);
-            playerMesh.transform.rotation = new Quaternion(0, 0.4f, 0, -0.9f);
+            playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, 0.4f, 0, -0.9f), Time.deltaTime * 10f);
         }
         else if (Input.GetKey("s"))
         {
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            playerMesh.transform.rotation = new Quaternion(0, 1, 0, 0);
+            playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, 1, 0, 0), Time.deltaTime * 10f);
         }
         else if (Input.GetKey("w"))
         {
             transform.Translate(Vector3.back * speed * Time.deltaTime);
-            playerMesh.transform.rotation = new Quaternion(0, 0, 0, 1);
+            playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, 0, 0, 1), Time.deltaTime * 10f);
         }
         else if (Input.GetKey("d"))
         {
             transform.Translate(Vector3.left * speed * Time.deltaTime);
-            playerMesh.transform.rotation = new Quaternion(0, 0.7f, 0, 0.7f);
-
+            playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, 0.7f, 0, 0.7f), Time.deltaTime * 10f);
         }
         else if (Input.GetKey("a"))
         {
             transform.Translate(Vector3.right * speed * Time.deltaTime);
-            playerMesh.transform.rotation = new Quaternion(0, 0.7f, 0, -0.7f);
+            playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, 0.7f, 0, -0.7f), Time.deltaTime * 10f);
 
         }
         if(Input.GetKeyDown(KeyCode.LeftShift))
