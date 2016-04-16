@@ -10,6 +10,7 @@ public class VIPController : MonoBehaviour {
     public float distance = 2f;
     private float distanceBetweenPlayer;
     public bool playerIsNoticed = false;
+    public int VIP_ID;
 
 
 	// Use this for initialization
@@ -20,7 +21,7 @@ public class VIPController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         distanceBetweenPlayer = Vector3.Distance(transform.position, player.transform.position);
-        Debug.Log(distanceBetweenPlayer);
+        //Debug.Log(distanceBetweenPlayer);
 
         if(distanceBetweenPlayer <= distance && player.GetComponent<PlayerControler>().tryChangeId == true && playerIsNoticed == false)
         {

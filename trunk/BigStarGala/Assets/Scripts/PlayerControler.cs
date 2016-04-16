@@ -7,6 +7,7 @@ public class PlayerControler : MonoBehaviour {
     public float rotationSpeed = 100.0F;
     public GameObject playerMesh;
     public bool tryChangeId = false;
+    public int identity;
     // Use this for initialization
     void Start () {
         
@@ -92,6 +93,8 @@ public class PlayerControler : MonoBehaviour {
     public void changeIdentity(GameObject obj)
     {
         playerMesh.GetComponent<MeshFilter>().sharedMesh = obj.GetComponent<MeshFilter>().mesh;
+        identity = obj.GetComponentInChildren<VIPController>().VIP_ID;
 
+        Debug.Log(obj.GetComponentInChildren<VIPController>().VIP_ID);
     }
 }
