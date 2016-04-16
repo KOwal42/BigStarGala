@@ -43,7 +43,7 @@ public class GuardScript : MonoBehaviour
     {
 
         //if (peopleInRange.Count > 0)
-        //Debug.Log("Object seen : " + peopleInRange[0].ToString() + " List.Count(): " + peopleInRange.Count);
+        //    Debug.Log("Object seen : " + peopleInRange[0].ToString() + " List.Count(): " + peopleInRange.Count);
 
         //Debug.Log("Guard State : " + CurrentState + "   NavMeshStatus: " + NavMeshPathStatus.PathComplete + "   Waypoint: " + waypointIndex);
 
@@ -51,10 +51,11 @@ public class GuardScript : MonoBehaviour
         {
             case GuardState.Patrol:
                 {
+                    agent.Resume();
                     if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 1f)
                     {
                         isWaiting = false;
-                        Debug.Log("Movin B!tch Current Waypoint: " + waypointIndex);
+                        //Debug.Log("Movin B!tch Current Waypoint: " + waypointIndex);
                         waypointIndex++;
                         if (waypointIndex > 3)
                             waypointIndex = 0;
@@ -71,15 +72,25 @@ public class GuardScript : MonoBehaviour
                 break;
             case GuardState.CheckID:
                 {
-                    if(!isCheckingID)
+                    agent.SetDestination(currentVIPPosition.position);
+                    if (agent.remainingDistance <= 3)
                     {
-                        isCheckingID = true;
-                        agent.SetDestination(currentVIPPosition.position);
-                        if (Vector3.Distance(currentVIPPosition.position, transform.position) <= 3)
+                        agent.Stop();
+                        Debug.Log("isCheckingID: " + isCheckingID);
+                        if (isCheckingID == false)
                         {
-                            agent.Stop();
+                            isCheckingID = true;
+                            Debug.Log("Agent stops    isCheckingID: " + isCheckingID);
                             StartCoroutine(CheckID());
                         }
+                    }
+                    Vector3 dir = currentVIPPosition.transform.position - transform.position;
+                    if (dir != Vector3.zero)
+                    {
+                        transform.rotation = Quaternion.Slerp(
+                            transform.rotation,
+                            Quaternion.LookRotation(dir),
+                            Time.deltaTime * 10);
                     }
                 }
                 break;
@@ -88,6 +99,7 @@ public class GuardScript : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
+
         if (collider.tag == "Player")
         {
             collider.GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
@@ -96,9 +108,11 @@ public class GuardScript : MonoBehaviour
 
         if (collider.tag == "VIP")
         {
-            if(!collider.GetComponent<VIPScript>().IsChecked)
+            if (!collider.GetComponent<VIPScript>().IsChecked)
+            {
                 collider.GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
-            peopleInRange.Add(collider.gameObject);
+                peopleInRange.Add(collider.gameObject);
+            }
         }
     }
 
@@ -149,13 +163,11 @@ public class GuardScript : MonoBehaviour
 
     IEnumerator CheckID()
     {
-        yield return new WaitForSeconds(5);
         currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked = true;
-        MoveNext(Command.GetBack);
+        yield return new WaitForSeconds(3);
         Debug.Log("Setting destination: " + Waypoints[waypointIndex].position + "    prevoius destination = " + agent.destination.ToString());
-        
+        MoveNext(Command.GetBack);
         agent.SetDestination(Waypoints[waypointIndex].position);
-        agent.Resume();
     }
 
     void observe()
@@ -164,11 +176,31 @@ public class GuardScript : MonoBehaviour
         {
             foreach (GameObject x in peopleInRange)
             {
-                if (x.GetComponent<DetectionIndicator>().Indicator >= 100)
+                switch (x.tag)
                 {
-                    currentVIPPosition = x.transform;
-                    MoveNext(Command.SeeVIP);
-                    isCheckingID = false;
+                    case "VIP":
+                        {
+                            if (x.GetComponent<DetectionIndicator>().Indicator >= 100)
+                            {
+                                currentVIPPosition = x.transform;
+                                if (!currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked)
+                                {
+                                    currentVIPPosition.gameObject.GetComponent<VIPScript>().State = VIPState.BeingChecked;
+                                    currentVIPPosition.gameObject.GetComponent<VIPScript>().guard = this.gameObject;
+                                    MoveNext(Command.SeeVIP);
+                                }
+                            }
+                        }
+                        break;
+                    case "Player":
+                        {
+                            if (x.GetComponent<DetectionIndicator>().Indicator >= 100)
+                            {
+                                currentVIPPosition = x.transform;
+                                MoveNext(Command.SeeVIP);
+                            }
+                        }
+                        break;
                 }
             }
         }

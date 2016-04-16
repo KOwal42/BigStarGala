@@ -18,7 +18,7 @@ public class DetectionIndicator : MonoBehaviour
     void Update()
     {
 
-        //Debug.Log(gameObject.ToString() + "  Indicator = " + Indicator);
+        //Debug.Log(gameObject.ToString() + "  Indicator = " + Indicator  + "  IndicatorState = " + State );
         switch (State)
             {
                 case IndicatorState.Increment:
