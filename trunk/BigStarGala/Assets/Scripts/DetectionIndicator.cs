@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class DetectionIndicator : MonoBehaviour
 {
@@ -19,7 +18,7 @@ public class DetectionIndicator : MonoBehaviour
     void Update()
     {
 
-        Debug.Log(gameObject.ToString() + "  Indicator = " + Indicator);
+        //Debug.Log(gameObject.ToString() + "  Indicator = " + Indicator);
         switch (State)
             {
                 case IndicatorState.Increment:

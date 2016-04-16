@@ -5,29 +5,28 @@ using System;
 
 public class GuardScript : MonoBehaviour
 {
-    private GameObject player;
-    private CapsuleCollider playerCollider;
     private Dictionary<StateTransition, GuardState> transitions;
     private NavMeshAgent agent;
     private int waypointIndex;
     private Transform currentVIPPosition;
     private bool isCheckingID;
+    private bool isWaiting;
     private List<GameObject> peopleInRange;
 
     public Transform[] Waypoints;
+    public int waitingTime;
     public GuardState CurrentState { get; private set; }
 
     // Use this for initialization
     void Start()
     {
         peopleInRange = new List<GameObject>();
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerCollider = player.GetComponent<CapsuleCollider>();
         CurrentState = GuardState.Patrol;
         agent = this.GetComponent<NavMeshAgent>();
         waypointIndex = 0;
         agent.SetDestination(Waypoints[waypointIndex].position);
         isCheckingID = false;
+        isWaiting = false;
 
         transitions = new Dictionary<StateTransition, GuardState>
             {
@@ -46,7 +45,7 @@ public class GuardScript : MonoBehaviour
         //if (peopleInRange.Count > 0)
         //Debug.Log("Object seen : " + peopleInRange[0].ToString() + " List.Count(): " + peopleInRange.Count);
 
-        Debug.Log("Guard State : " + CurrentState + "   NavMeshStatus: " + NavMeshPathStatus.PathComplete + "   Waypoint: " + waypointIndex);
+        //Debug.Log("Guard State : " + CurrentState + "   NavMeshStatus: " + NavMeshPathStatus.PathComplete + "   Waypoint: " + waypointIndex);
 
         switch (CurrentState)
         {
@@ -54,28 +53,33 @@ public class GuardScript : MonoBehaviour
                 {
                     if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 1f)
                     {
+                        isWaiting = false;
                         Debug.Log("Movin B!tch Current Waypoint: " + waypointIndex);
                         waypointIndex++;
                         if (waypointIndex > 3)
                             waypointIndex = 0;
-                        agent.SetDestination(Waypoints[waypointIndex].position);
+                        MoveNext(Command.Rest);
                     }
                     observe();
                 }
                 break;
             case GuardState.Wait:
                 {
-                    if (!isCheckingID)
-                        StartCoroutine(CheckID());
+                    if (!isWaiting)
+                        StartCoroutine(wait());
                 }
                 break;
             case GuardState.CheckID:
                 {
-                    agent.SetDestination(currentVIPPosition.position);
-                    if (agent.remainingDistance <= 3)
+                    if(!isCheckingID)
                     {
-                        agent.Stop();
-                        MoveNext(Command.Rest);
+                        isCheckingID = true;
+                        agent.SetDestination(currentVIPPosition.position);
+                        if (Vector3.Distance(currentVIPPosition.position, transform.position) <= 3)
+                        {
+                            agent.Stop();
+                            StartCoroutine(CheckID());
+                        }
                     }
                 }
                 break;
@@ -92,12 +96,10 @@ public class GuardScript : MonoBehaviour
 
         if (collider.tag == "VIP")
         {
-            //if(!collider.GetComponent<VIP_Script>().IDChecked)
-            collider.GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
+            if(!collider.GetComponent<VIPScript>().IsChecked)
+                collider.GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
             peopleInRange.Add(collider.gameObject);
         }
-
-        // Debug.Log("Object seen : " + collider.tag);
     }
 
     void OnTriggerExit(Collider collider)
@@ -147,27 +149,37 @@ public class GuardScript : MonoBehaviour
 
     IEnumerator CheckID()
     {
-        isCheckingID = true;
         yield return new WaitForSeconds(5);
-        isCheckingID = false;
+        currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked = true;
         MoveNext(Command.GetBack);
+        Debug.Log("Setting destination: " + Waypoints[waypointIndex].position + "    prevoius destination = " + agent.destination.ToString());
+        
+        agent.SetDestination(Waypoints[waypointIndex].position);
+        agent.Resume();
     }
 
     void observe()
     {
         if (peopleInRange.Count > 0)
         {
-            Debug.Log("Going to check ID");
             foreach (GameObject x in peopleInRange)
             {
                 if (x.GetComponent<DetectionIndicator>().Indicator >= 100)
                 {
                     currentVIPPosition = x.transform;
                     MoveNext(Command.SeeVIP);
-                    Debug.Log("Going to check ID");
+                    isCheckingID = false;
                 }
             }
         }
+    }
+
+    IEnumerator wait()
+    {
+        isWaiting = true;
+        yield return new WaitForSeconds(waitingTime);
+        MoveNext(Command.GetBack);
+        agent.SetDestination(Waypoints[waypointIndex].position);
     }
 }
 
