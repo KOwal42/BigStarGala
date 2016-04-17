@@ -8,6 +8,7 @@ public class VIPScript : MonoBehaviour
     private NavMeshAgent agent;
     private int waypointIndex;
     private bool coroutineStareted;
+    private Animator animator;
 
     public GameObject guard;
     public VIPState State { get; set; }
@@ -23,6 +24,7 @@ public class VIPScript : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         State = VIPState.Walking;
         coroutineStareted = false;
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -34,6 +36,7 @@ public class VIPScript : MonoBehaviour
             case VIPState.Walking:
                 {
                     agent.Resume();
+                    animator.SetFloat("Speed", 10);
                     if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 1f)
                     {
                         waypointIndex++;
@@ -46,6 +49,7 @@ public class VIPScript : MonoBehaviour
             case VIPState.BeingChecked:
                 {
                     agent.Stop();
+                    animator.SetFloat("Speed", 0);
                     Vector3 dir = guard.transform.position - transform.position;
                     if (dir != Vector3.zero)
                     {
@@ -54,7 +58,7 @@ public class VIPScript : MonoBehaviour
                             Quaternion.LookRotation(dir),
                             Time.deltaTime * 10);
                     }
-                    if (!coroutineStareted)
+                    if (!coroutineStareted && Vector3.Distance(guard.transform.position, transform.position) < 3)
                         StartCoroutine(BeingChecked());
                 }
                 break;
@@ -77,7 +81,10 @@ public class VIPScript : MonoBehaviour
     IEnumerator BeingChecked()
     {
         coroutineStareted = true;
-        yield return new WaitForSeconds(3);
+        animator.SetTrigger("Explain");
+        yield return new WaitForSeconds(1.5f);
+        animator.SetTrigger("Explain");
+        yield return new WaitForSeconds(1.5f);
         State = VIPState.Walking;
         coroutineStareted = false;
     }

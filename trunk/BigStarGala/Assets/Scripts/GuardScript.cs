@@ -102,7 +102,6 @@ public class GuardScript : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
-
         if (collider.tag == "Player")
         {
             collider.GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
@@ -170,7 +169,8 @@ public class GuardScript : MonoBehaviour
 
     IEnumerator CheckID()
     {
-        if(currentVIPPosition.gameObject.tag == "VIP")
+        animator.SetFloat("Speed", 0);
+        if (currentVIPPosition.gameObject.tag == "VIP")
         {
             currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked = true;
             yield return new WaitForSeconds(3);
