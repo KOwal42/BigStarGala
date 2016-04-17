@@ -49,7 +49,7 @@ public class VIPScript : MonoBehaviour
             case VIPState.BeingChecked:
                 {
                     agent.Stop();
-                    animator.SetFloat("Speed", 0);
+                    animator.SetBool("isWaiting", true);
                     Vector3 dir = guard.transform.position - transform.position;
                     if (dir != Vector3.zero)
                     {
@@ -58,7 +58,7 @@ public class VIPScript : MonoBehaviour
                             Quaternion.LookRotation(dir),
                             Time.deltaTime * 10);
                     }
-                    if (!coroutineStareted && Vector3.Distance(guard.transform.position, transform.position) < 0.4f)
+                    if (!coroutineStareted && Vector3.Distance(guard.transform.position, transform.position) < 0.5f)
                         StartCoroutine(BeingChecked());
                 }
                 break;
@@ -81,6 +81,7 @@ public class VIPScript : MonoBehaviour
     IEnumerator BeingChecked()
     {
         coroutineStareted = true;
+        animator.SetFloat("Speed", 0f);
         animator.SetTrigger("Explain");
         yield return new WaitForSeconds(1.5f);
         animator.SetTrigger("Explain");

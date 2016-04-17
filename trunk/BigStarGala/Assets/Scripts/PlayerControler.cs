@@ -19,6 +19,7 @@ public class PlayerControler : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        animator.SetFloat("Speed", 0f);
 
         //float rotation = Input.GetAxis("Horizontal") * rotationSpeed;
         //rotation *= Time.deltaTime;
@@ -26,7 +27,7 @@ public class PlayerControler : MonoBehaviour {
         ///float translationX = Input.GetAxis("Horizontal") * speed;
         //float translationZ = Input.GetAxis("Vertical") * speed;
         //Debug.Log(playerMesh.transform.rotation.ToString());
-        
+
         if (Input.GetKey("w") && Input.GetKey("d"))
         {
             transform.Translate(Vector3.forward * speed * Time.deltaTime);

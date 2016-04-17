@@ -13,7 +13,12 @@ public class GuardScript : MonoBehaviour
     private bool isWaiting;
     private List<GameObject> peopleInRange;
     private Animator animator;
+    private bool isPlayerInSight;
+    private Plane[] planes;
+    private GameObject player;
+    private CapsuleCollider playerCollider;
 
+    public Camera camera;
     public Transform[] Waypoints;
     public int waitingTime;
     public GuardState CurrentState { get; private set; }
@@ -28,6 +33,9 @@ public class GuardScript : MonoBehaviour
         agent.SetDestination(Waypoints[waypointIndex].position);
         isCheckingID = false;
         isWaiting = false;
+        player = GameObject.FindWithTag("Player");
+        playerCollider = player.GetComponent<CapsuleCollider>();
+        planes = GeometryUtility.CalculateFrustumPlanes(camera);
         animator = GetComponentInChildren<Animator>();
 
         transitions = new Dictionary<StateTransition, GuardState>
@@ -47,7 +55,7 @@ public class GuardScript : MonoBehaviour
         //if (peopleInRange.Count > 0)
         //    Debug.Log("Object seen : " + peopleInRange[0].ToString() + " List.Count(): " + peopleInRange.Count);
 
-        //Debug.Log("Guard State : " + CurrentState + "   NavMeshStatus: " + NavMeshPathStatus.PathComplete + "   Waypoint: " + waypointIndex);
+        Debug.Log("Guard State : " + CurrentState + "   NavMeshStatus: " + NavMeshPathStatus.PathComplete + "   Waypoint: " + waypointIndex);
 
         switch (CurrentState)
         {
@@ -58,7 +66,6 @@ public class GuardScript : MonoBehaviour
                     if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
                     {
                         isWaiting = false;
-                        //Debug.Log("Movin B!tch Current Waypoint: " + waypointIndex);
                         waypointIndex++;
                         if (waypointIndex > 3)
                             waypointIndex = 0;
@@ -76,14 +83,15 @@ public class GuardScript : MonoBehaviour
             case GuardState.CheckID:
                 {
                     agent.SetDestination(currentVIPPosition.position);
-                    if (agent.remainingDistance <= 0.4f)
+                    
+                    if (agent.remainingDistance < 0.4f)
                     {
                         agent.Stop();
-                        Debug.Log("isCheckingID: " + isCheckingID);
-                        if (isCheckingID == false)
+
+                        Debug.Log(agent.remainingDistance  +  "   " + isCheckingID);
+                        if (!isCheckingID)
                         {
                             isCheckingID = true;
-                            Debug.Log("Agent stops    isCheckingID: " + isCheckingID);
                             StartCoroutine(CheckID());
                         }
                     }
@@ -93,7 +101,7 @@ public class GuardScript : MonoBehaviour
                         transform.rotation = Quaternion.Slerp(
                             transform.rotation,
                             Quaternion.LookRotation(dir),
-                            Time.deltaTime * 10);
+                            Time.deltaTime * 5);
                     }
                 }
                 break;
@@ -102,7 +110,7 @@ public class GuardScript : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.tag == "Player")
+        if (collider.tag == "Player" && seePlayer())
         {
             collider.GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
             peopleInRange.Add(collider.gameObject);
@@ -110,7 +118,7 @@ public class GuardScript : MonoBehaviour
 
         if (collider.tag == "VIP")
         {
-            if (!collider.GetComponent<VIPScript>().IsChecked)
+            if (!collider.GetComponent<VIPScript>().IsChecked && collider.GetComponent<VIPScript>().State != VIPState.DoStuff)
             {
                 collider.GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
                 peopleInRange.Add(collider.gameObject);
@@ -118,9 +126,21 @@ public class GuardScript : MonoBehaviour
         }
     }
 
+    void OnTriggerStay(Collider collider)
+    {
+        if(collider.tag == "Player")
+        {
+            if(seePlayer())
+                player.GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
+            else
+                player.GetComponent<DetectionIndicator>().State = IndicatorState.Decrement;
+
+        }
+    }
+
     void OnTriggerExit(Collider collider)
     {
-        if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "VIP")
+        if ((collider.gameObject.tag == "Player" && seePlayer())|| collider.gameObject.tag == "VIP")
         {
             collider.gameObject.GetComponent<DetectionIndicator>().State = IndicatorState.Decrement;
             if (peopleInRange.Contains(collider.gameObject))
@@ -170,18 +190,21 @@ public class GuardScript : MonoBehaviour
     IEnumerator CheckID()
     {
         animator.SetFloat("Speed", 0);
+        Debug.Log("1");
         if (currentVIPPosition.gameObject.tag == "VIP")
         {
             currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked = true;
             yield return new WaitForSeconds(3);
-            Debug.Log("Setting destination: " + Waypoints[waypointIndex].position + "    prevoius destination = " + agent.destination.ToString());
+            Debug.Log("2");
             MoveNext(Command.GetBack);
             agent.SetDestination(Waypoints[waypointIndex].position);
+            isCheckingID = false;
         }
         else if(currentVIPPosition.gameObject.tag == "Player")
         {
             if(Vector3.Distance(currentVIPPosition.position, transform.position) < 0.4f)
             {
+                Debug.Log("3");
                 currentVIPPosition.GetComponent<PlayerControler>().enabled = false;
             }
         }
@@ -222,6 +245,24 @@ public class GuardScript : MonoBehaviour
                 }
             }
         }
+    }
+
+    bool seePlayer()
+    {
+        planes = GeometryUtility.CalculateFrustumPlanes(camera);
+        if (GeometryUtility.TestPlanesAABB(planes, playerCollider.bounds))
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position, player.transform.position - transform.position);
+            if (Physics.Raycast(ray, out hit))
+                if (hit.collider.tag == "Player")
+                    return true;
+                else
+                    return false;
+            else
+                return false;
+        }
+        return false;
     }
 
     IEnumerator wait()
