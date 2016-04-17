@@ -12,7 +12,7 @@ public class CameraControler : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        Vector3 offset = new Vector3(-3, 3, 0);
+        Vector3 offset = new Vector3(-15, 15, 0);
         //transform.Translate(player.transform.position.x, 0 , player.transform.position.z) ;
         transform.position = player.transform.position + offset;
 	}
