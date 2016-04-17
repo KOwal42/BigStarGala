@@ -7,8 +7,8 @@ public class PlayerControler : MonoBehaviour {
     public float rotationSpeed = 100.0F;
     public GameObject playerMesh;
     public bool tryChangeId = false;
-    public Quaternion oldRotation;
     private Animator animator;
+    public int identity = 1;
     // Use this for initialization
     void Start () {
 
@@ -113,12 +113,14 @@ public class PlayerControler : MonoBehaviour {
         //translationZ *= Time.deltaTime;
         //translationX *= Time.deltaTime;
         //transform.Translate(translationX, 0, translationZ);
-        oldRotation = playerMesh.transform.rotation;
     }
     public void changeIdentity(GameObject obj)
     {
         playerMesh.GetComponentInChildren<Renderer>().sharedMaterial = obj.GetComponent<Renderer>().material;
-        playerMesh.transform.rotation = oldRotation;
+        //playerMesh.transform.rotation = oldRotation;
         Debug.Log("Changed identity!");
+        identity = obj.GetComponentInChildren<VIPScript>().VIP_ID;
+
+        Debug.Log(identity);
     }
 }
