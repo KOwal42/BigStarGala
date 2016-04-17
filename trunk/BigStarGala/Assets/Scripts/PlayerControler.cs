@@ -21,11 +21,6 @@ public class PlayerControler : MonoBehaviour {
     {
         animator.SetFloat("Speed", 10f);
         
-        //float rotation = Input.GetAxis("Horizontal") * rotationSpeed;
-        //rotation *= Time.deltaTime;
-        //transform.Rotate(0, rotation, 0);
-        ///float translationX = Input.GetAxis("Horizontal") * speed;
-        //float translationZ = Input.GetAxis("Vertical") * speed;
         if (Input.GetKey("w") && Input.GetKey("d"))
         {
             transform.Translate(Vector3.back * speed * Time.deltaTime);

@@ -121,8 +121,12 @@ public class GuardScript : MonoBehaviour
 
     void OnTriggerExit(Collider collider)
     {
-        collider.gameObject.GetComponent<DetectionIndicator>().State = IndicatorState.Decrement;
-        peopleInRange.Remove(collider.gameObject);
+        if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "VIP")
+        {
+            collider.gameObject.GetComponent<DetectionIndicator>().State = IndicatorState.Decrement;
+            if (peopleInRange.Contains(collider.gameObject))
+                peopleInRange.Remove(collider.gameObject);
+        }
     }
 
 
@@ -166,11 +170,22 @@ public class GuardScript : MonoBehaviour
 
     IEnumerator CheckID()
     {
-        currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked = true;
-        yield return new WaitForSeconds(3);
-        Debug.Log("Setting destination: " + Waypoints[waypointIndex].position + "    prevoius destination = " + agent.destination.ToString());
-        MoveNext(Command.GetBack);
-        agent.SetDestination(Waypoints[waypointIndex].position);
+        if(currentVIPPosition.gameObject.tag == "VIP")
+        {
+            currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked = true;
+            yield return new WaitForSeconds(3);
+            Debug.Log("Setting destination: " + Waypoints[waypointIndex].position + "    prevoius destination = " + agent.destination.ToString());
+            MoveNext(Command.GetBack);
+            agent.SetDestination(Waypoints[waypointIndex].position);
+        }
+        else if(currentVIPPosition.gameObject.tag == "Player")
+        {
+            if(Vector3.Distance(currentVIPPosition.position, transform.position) < 3)
+            {
+                currentVIPPosition.GetComponent<PlayerControler>().enabled = false;
+            }
+        }
+        
     }
 
     void observe()
