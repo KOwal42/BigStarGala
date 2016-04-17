@@ -11,6 +11,7 @@ public class GuardScript : MonoBehaviour
     private Transform currentVIPPosition;
     private bool isCheckingID;
     private bool isWaiting;
+    private Animator animator;
     private List<GameObject> peopleInRange;
 
     public Transform[] Waypoints;
@@ -24,6 +25,7 @@ public class GuardScript : MonoBehaviour
         CurrentState = GuardState.Patrol;
         agent = this.GetComponent<NavMeshAgent>();
         waypointIndex = 0;
+        animator = GetComponentInChildren<Animator>();
         agent.SetDestination(Waypoints[waypointIndex].position);
         isCheckingID = false;
         isWaiting = false;
@@ -52,6 +54,7 @@ public class GuardScript : MonoBehaviour
             case GuardState.Patrol:
                 {
                     agent.Resume();
+                    animator.SetFloat("Speed", 10);
                     if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 1f)
                     {
                         isWaiting = false;
@@ -209,6 +212,7 @@ public class GuardScript : MonoBehaviour
     IEnumerator wait()
     {
         isWaiting = true;
+        animator.SetFloat("Speed", 0.1f);
         yield return new WaitForSeconds(waitingTime);
         MoveNext(Command.GetBack);
         agent.SetDestination(Waypoints[waypointIndex].position);

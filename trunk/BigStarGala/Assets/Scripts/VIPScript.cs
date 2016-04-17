@@ -8,6 +8,7 @@ public class VIPScript : MonoBehaviour
     private NavMeshAgent agent;
     private int waypointIndex;
     private bool coroutineStareted;
+    private Animator animator;
 
     public GameObject guard;
     public VIPState State { get; set; }
@@ -23,6 +24,7 @@ public class VIPScript : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         State = VIPState.Walking;
         coroutineStareted = false;
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -34,6 +36,8 @@ public class VIPScript : MonoBehaviour
             case VIPState.Walking:
                 {
                     agent.Resume();
+                    animator.SetFloat("Speed", 10);
+                   
                     if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 1f)
                     {
                         waypointIndex++;
@@ -46,6 +50,8 @@ public class VIPScript : MonoBehaviour
             case VIPState.BeingChecked:
                 {
                     agent.Stop();
+                    animator.SetFloat("Speed", 0);
+                    animator.SetTrigger("Wave");
                     Vector3 dir = guard.transform.position - transform.position;
                     if (dir != Vector3.zero)
                     {
