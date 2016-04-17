@@ -31,9 +31,6 @@ public class PlayerControler : MonoBehaviour {
 	void Update ()
     {
 
-        if (Input.GetKeyDown(KeyCode.E))
-            GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
-
         #region = Movement
         animator.SetFloat("Speed", 0f);
 
