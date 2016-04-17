@@ -64,7 +64,6 @@ public class PlayerControler : MonoBehaviour {
         {
             transform.Translate(Vector3.right * speed * Time.deltaTime);
             playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, 0.7f, 0, -0.7f), Time.deltaTime * 10f);
-
         }
         if(Input.GetKeyDown(KeyCode.LeftShift))
         {
