@@ -40,7 +40,7 @@ public class VIPScript : MonoBehaviour
                     if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
                     {
                         waypointIndex++;
-                        if (waypointIndex > 1)
+                        if (waypointIndex > Waypoints.Length - 1)
                             waypointIndex = 0;
                         agent.SetDestination(Waypoints[waypointIndex].position);
                     }

@@ -67,7 +67,7 @@ public class GuardScript : MonoBehaviour
                     {
                         isWaiting = false;
                         waypointIndex++;
-                        if (waypointIndex > 3)
+                        if (waypointIndex > Waypoints.Length - 1)
                             waypointIndex = 0;
                         MoveNext(Command.Rest);
                     }
