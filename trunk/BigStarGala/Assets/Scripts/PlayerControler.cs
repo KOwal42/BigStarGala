@@ -7,14 +7,20 @@ public class PlayerControler : MonoBehaviour {
     public float rotationSpeed = 100.0F;
     public GameObject playerMesh;
     public bool tryChangeId = false;
+
+    private Animator animator;
     // Use this for initialization
     void Start () {
-        
+
+        animator = GetComponentInChildren<Animator>();
+            
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
+        animator.SetFloat("Speed", 10f);
+        
         //float rotation = Input.GetAxis("Horizontal") * rotationSpeed;
         //rotation *= Time.deltaTime;
         //transform.Rotate(0, rotation, 0);
