@@ -55,7 +55,7 @@ public class GuardScript : MonoBehaviour
                 {
                     agent.Resume();
                     animator.SetFloat("Speed", 10);
-                    if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 1f)
+                    if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
                     {
                         isWaiting = false;
                         //Debug.Log("Movin B!tch Current Waypoint: " + waypointIndex);
@@ -76,7 +76,7 @@ public class GuardScript : MonoBehaviour
             case GuardState.CheckID:
                 {
                     agent.SetDestination(currentVIPPosition.position);
-                    if (agent.remainingDistance <= 3)
+                    if (agent.remainingDistance <= 0.4f)
                     {
                         agent.Stop();
                         Debug.Log("isCheckingID: " + isCheckingID);
@@ -180,7 +180,7 @@ public class GuardScript : MonoBehaviour
         }
         else if(currentVIPPosition.gameObject.tag == "Player")
         {
-            if(Vector3.Distance(currentVIPPosition.position, transform.position) < 3)
+            if(Vector3.Distance(currentVIPPosition.position, transform.position) < 0.4f)
             {
                 currentVIPPosition.GetComponent<PlayerControler>().enabled = false;
             }

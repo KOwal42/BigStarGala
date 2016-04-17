@@ -37,7 +37,7 @@ public class VIPScript : MonoBehaviour
                 {
                     agent.Resume();
                     animator.SetFloat("Speed", 10);
-                    if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 1f)
+                    if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
                     {
                         waypointIndex++;
                         if (waypointIndex > 1)
@@ -58,7 +58,7 @@ public class VIPScript : MonoBehaviour
                             Quaternion.LookRotation(dir),
                             Time.deltaTime * 10);
                     }
-                    if (!coroutineStareted && Vector3.Distance(guard.transform.position, transform.position) < 3)
+                    if (!coroutineStareted && Vector3.Distance(guard.transform.position, transform.position) < 0.4f)
                         StartCoroutine(BeingChecked());
                 }
                 break;

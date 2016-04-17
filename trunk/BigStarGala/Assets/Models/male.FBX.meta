@@ -499,8 +499,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Idle
       takeName: Take 001
-      firstFrame: 177
-      lastFrame: 181
+      firstFrame: 314
+      lastFrame: 345
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -702,7 +702,7 @@ ModelImporter:
       name: Jump
       takeName: Take 001
       firstFrame: 284
-      lastFrame: 345
+      lastFrame: 314
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
