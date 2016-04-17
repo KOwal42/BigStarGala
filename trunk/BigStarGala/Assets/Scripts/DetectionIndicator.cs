@@ -45,28 +45,14 @@ public class DetectionIndicator : MonoBehaviour
     void OnGUI()
     {
 
-        //        worldPosition = new Vector3(transform.position.x, transform.position.y + adjustment,
-        //transform.position.z);
-        //        screenPosition = myCamera.WorldToScreenPoint(worldPosition);
-
-        //        GUI.Box(new Rect(screenPosition.x - healthBarLeft / 2,
-        //        Screen.height - screenPosition.y - barTop,
-        //        100, healthBarHeight), "");
-        //        GUI.DrawTexture(new Rect(screenPosition.x - healthBarLeft / 2,
-        //        Screen.height - screenPosition.y - barTop,
-        //        healthBarLength, healthBarHeight), healthTex);
-        //        GUI.Label(new Rect(screenPosition.x - labelWidth / 2,
-        //        Screen.height - screenPosition.y - labelTop,
-        //        labelWidth, labelHeight), playerName, myStyle);
         if (Indicator > 0 && gameObject.tag == "Player")
         {
             if (Camera.current != null)
             {
-                Vector3 screenPosition = Camera.current.WorldToScreenPoint(transform.position);// gets screen position.
+                Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);// gets screen position.
                 screenPosition.y = Screen.height - (screenPosition.y + 1);// inverts y
                 GUI.DrawTexture(new Rect(screenPosition.x - IndicatorOffsetX / 2, Screen.height - screenPosition.y - 10, Indicator, 25), texture);
             }
-            //GUI.DrawTextureWithTexCoords(new Rect(screenPosition.x - IndicatorOffsetX / 2, Screen.height - screenPosition.y - 10, Indicator, 25), texture, new Rect(0, 0, 640, 640));
         }
 
     }

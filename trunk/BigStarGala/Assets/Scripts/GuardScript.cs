@@ -51,12 +51,6 @@ public class GuardScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        //if (peopleInRange.Count > 0)
-        //    Debug.Log("Object seen : " + peopleInRange[0].ToString() + " List.Count(): " + peopleInRange.Count);
-
-        Debug.Log("Guard State : " + CurrentState + "   NavMeshStatus: " + NavMeshPathStatus.PathComplete + "   Waypoint: " + waypointIndex);
-
         switch (CurrentState)
         {
             case GuardState.Patrol:
@@ -190,12 +184,10 @@ public class GuardScript : MonoBehaviour
     IEnumerator CheckID()
     {
         animator.SetFloat("Speed", 0);
-        Debug.Log("1");
         if (currentVIPPosition.gameObject.tag == "VIP")
         {
             currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked = true;
             yield return new WaitForSeconds(3);
-            Debug.Log("2");
             MoveNext(Command.GetBack);
             agent.SetDestination(Waypoints[waypointIndex].position);
             isCheckingID = false;
@@ -204,7 +196,6 @@ public class GuardScript : MonoBehaviour
         {
             if(Vector3.Distance(currentVIPPosition.position, transform.position) < 0.4f)
             {
-                Debug.Log("3");
                 currentVIPPosition.GetComponent<PlayerControler>().enabled = false;
             }
         }
@@ -255,10 +246,13 @@ public class GuardScript : MonoBehaviour
             RaycastHit hit;
             Ray ray = new Ray(transform.position, player.transform.position - transform.position);
             if (Physics.Raycast(ray, out hit))
+            {
+                Debug.Log(hit.ToString());
                 if (hit.collider.tag == "Player")
                     return true;
                 else
                     return false;
+            }
             else
                 return false;
         }

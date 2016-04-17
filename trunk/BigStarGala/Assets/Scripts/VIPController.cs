@@ -4,44 +4,49 @@ using System.Collections;
 public class VIPController : MonoBehaviour {
 
 
-    [SerializeField]
     private GameObject player;
-    public GameObject parent;
     public float distance = 2f;
-    private float distanceBetweenPlayer;
-    public bool playerIsNoticed = false;
 
+    public Gender Gender;
+    public bool PlayerIsNoticed { get; private set; }
+    public int ID;
+    public Texture2D skin; 
 
 	// Use this for initialization
 	void Start () {
-        playerIsNoticed = false;
+        PlayerIsNoticed = false;
+        player = GameObject.FindGameObjectWithTag("Player");
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        distanceBetweenPlayer = Vector3.Distance(transform.position, player.transform.position);
-       // Debug.Log(distanceBetweenPlayer);
-       // Debug.Log(player.GetComponent<PlayerControler>().tryChangeId.ToString() + playerIsNoticed.ToString());
-        if(distanceBetweenPlayer <= distance && player.GetComponent<PlayerControler>().tryChangeId == true && playerIsNoticed == false)
+
+        if(Vector3.Distance(transform.position, player.transform.position) <= distance && Input.GetKeyDown(KeyCode.LeftShift) && PlayerIsNoticed == false)
         {
-            Debug.Log("triggg");
-            player.GetComponent<PlayerControler>().changeIdentity(parent);
+            player.GetComponent<PlayerControler>().changeIdentity(ID, skin, Gender);
         }
     }
 
-    void OnTriggerStay(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.tag == "Player")
         {
-            playerIsNoticed = true;
+            PlayerIsNoticed = true;
         }
     }
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.tag == "Player")
         {
-            playerIsNoticed = false;
+            PlayerIsNoticed = false;
         }
     }
     
+}
+
+
+public enum Gender
+{
+    Female,
+    Male
 }

@@ -8,7 +8,7 @@ public class VIPScript : MonoBehaviour
     private NavMeshAgent agent;
     private int waypointIndex;
     private bool coroutineStareted;
-    private Animator animator;
+    public Animator animator;
 
     public GameObject guard;
     public VIPState State { get; set; }
@@ -49,7 +49,6 @@ public class VIPScript : MonoBehaviour
             case VIPState.BeingChecked:
                 {
                     agent.Stop();
-                    animator.SetBool("isWaiting", true);
                     Vector3 dir = guard.transform.position - transform.position;
                     if (dir != Vector3.zero)
                     {
@@ -64,6 +63,10 @@ public class VIPScript : MonoBehaviour
                 break;
             case VIPState.DoStuff:
                 {
+                    agent.Stop();
+                    animator.SetFloat("Speed", 0);
+                    if(!coroutineStareted)
+                        StartCoroutine(DoStuff());
                 }
                 break;
         }
@@ -86,6 +89,14 @@ public class VIPScript : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         animator.SetTrigger("Explain");
         yield return new WaitForSeconds(1.5f);
+        State = VIPState.Walking;
+        coroutineStareted = false;
+    }
+
+    IEnumerator DoStuff()
+    {
+        coroutineStareted = true;
+        yield return new WaitForSeconds(4);
         State = VIPState.Walking;
         coroutineStareted = false;
     }
