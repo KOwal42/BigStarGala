@@ -115,11 +115,11 @@ public class PlayerControler : MonoBehaviour {
     }
     public void changeIdentity(GameObject obj)
     {
-        playerMesh.GetComponentInChildren<Renderer>().sharedMaterial = obj.GetComponent<Renderer>().material;
-        //playerMesh.transform.rotation = oldRotation;
-        Debug.Log("Changed identity!");
-        identity = obj.GetComponentInChildren<VIPScript>().VIP_ID;
+        //playerMesh.GetComponentInChildren<Renderer>().sharedMaterial = obj.GetComponent<Renderer>().material;
+        ////playerMesh.transform.rotation = oldRotation;
+        //Debug.Log("Changed identity!");
+        //identity = obj.GetComponentInChildren<VIPScript>().VIP_ID;
 
-        Debug.Log(identity);
+        //Debug.Log(identity);
     }
 }
