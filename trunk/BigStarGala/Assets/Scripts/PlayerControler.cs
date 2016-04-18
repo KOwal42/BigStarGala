@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Assets.Scripts;
 
 public class PlayerControler : MonoBehaviour {
 
@@ -16,6 +17,7 @@ public class PlayerControler : MonoBehaviour {
 
     public bool isActionActive;
     public Texture2D EButtonTexture;
+    public float cooldown;
 
     public int ID { get; private set; }
     public float speed = 10.0F;
@@ -24,16 +26,19 @@ public class PlayerControler : MonoBehaviour {
     public bool tryChangeId = false;
     public Animator animator;
     public int identity = 1;
+    private float delta;
     // Use this for initialization
     void Start () {
         isActionActive = false;
         animator = GetComponentInChildren<Animator>();
+        cooldown = 3;
+        delta = 0;
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-
+        delta += Time.deltaTime;
         #region = Movement
         animator.SetFloat("Speed", 0f);
 
@@ -101,13 +106,15 @@ public class PlayerControler : MonoBehaviour {
 
         #region = Special
 
-        if(Input.GetKeyDown(KeyCode.E) && isActionActive)
+        if(Input.GetKeyDown(KeyCode.E) && isActionActive && delta > cooldown)
         {
+            Debug.Log("Przed kliknięciem: " + ID);
+            delta = 0;
             switch(ID)
             {
-                case 1: { animator.SetTrigger("TakingPhoto"); } break;
-                case 2: { animator.SetTrigger("RecievingStatue"); } break;
-                case 3: { animator.SetTrigger("Wave"); } break;
+                case 1: { animator.SetTrigger("TakingPhoto");  VictoryConditionManager.UpdateAction(1); } break;
+                case 2: { animator.SetTrigger("RecievingStatue"); VictoryConditionManager.UpdateAction(2); } break;
+                case 3: { animator.SetTrigger("Wave"); VictoryConditionManager.UpdateAction(3); } break;
             }
         }
 
@@ -132,16 +139,15 @@ public class PlayerControler : MonoBehaviour {
             rendererFemale.material.EnableKeyword("_DETAIL_MULX2");
             rendererFemale.material.SetTexture("_DetailAlbedoMap", texture);
         }
-        this.ID = ID;
+        this.ID = ObjectCopier.Clone<int>(ID);
+        Debug.Log(this.ID); 
     }
 
     void OnGUI()
     {
-        if (Camera.main != null && isActionActive)
+        if (Camera.main != null && isActionActive && delta > cooldown)
         {
-            Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);// gets screen position.
-            screenPosition.y = Screen.height - (screenPosition.y + 1);// inverts y
-            GUI.DrawTexture(new Rect(screenPosition.x - 20, Screen.height - screenPosition.y - 20, 40, 40), EButtonTexture);
+            GUI.Box(new Rect(Screen.width/2 - 20, Screen.height/2 - 20, 40, 40), EButtonTexture);
         }
     }
 }

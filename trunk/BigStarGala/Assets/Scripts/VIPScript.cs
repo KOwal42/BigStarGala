@@ -82,7 +82,7 @@ public class VIPScript : MonoBehaviour
                 break;
             case VIPState.DoStuff:
                 {
-                    Debug.Log("DO Stuff");
+                    //Debug.Log("DO Stuff");
                     if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
                         if (!coroutineStareted)
                             StartCoroutine(DoStuff());

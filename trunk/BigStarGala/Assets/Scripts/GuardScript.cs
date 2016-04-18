@@ -234,7 +234,7 @@ public class GuardScript : MonoBehaviour
     {
         coroutineInProgress = true;
         animator.SetFloat("Speed", 0);
-        Debug.Log("Czekanie");
+        //Debug.Log("Czekanie");
         yield return new WaitForSeconds(Waypoints[currentIndex].RandomizeTime());
         currentIndex = RandomizeWaypoint();
         agent.SetDestination(Waypoints[currentIndex].transform.position);
