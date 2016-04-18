@@ -17,7 +17,7 @@ public class DetectionIndicator : MonoBehaviour
     {
         Indicator = 0;
         State = IndicatorState.Decrement;
-        Eye.color = new Color(1,1,1,0);
+        //Eye.color = new Color(1,1,1,0);
     }
 
     // Update is called once per frame

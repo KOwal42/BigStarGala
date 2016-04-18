@@ -1024,7 +1024,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IndicatorOffsetX: 50
   IndicatorOffsetY: 50
-  texture: {fileID: 0}
+  Eye: {fileID: 0}
   rate: 10000
 --- !u!114 &11477840
 MonoBehaviour:
@@ -1043,6 +1043,11 @@ MonoBehaviour:
   Waypoints:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &11495910
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1057,6 +1062,13 @@ MonoBehaviour:
   distance: 0.5
   Gender: 0
   ID: 3
+  materials:
+  - {fileID: 2100000, guid: 250c7471ca355b14a8a7aa67f01c40a8, type: 2}
+  - {fileID: 2100000, guid: a7607b50432d03744b0abc37236b07d4, type: 2}
+  - {fileID: 2100000, guid: 2215d9a1abbab9d4b99a1af655b7f71c, type: 2}
+  - {fileID: 2100000, guid: f4f7e2a1159032f4392b7e1038af67a9, type: 2}
+  - {fileID: 2100000, guid: 31e803d6573497e47ab0649cc5f37298, type: 2}
+  - {fileID: 2100000, guid: 63570748f8ae46a4fad3fb22472449ae, type: 2}
   skin: {fileID: 2800000, guid: b2b0a4baf8bc7114597b148e98bfdde9, type: 3}
 --- !u!136 &13601240
 CapsuleCollider:

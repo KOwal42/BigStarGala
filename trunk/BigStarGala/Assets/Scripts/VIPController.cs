@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Assets.Scripts;
 
 public class VIPController : MonoBehaviour {
 
@@ -10,6 +11,7 @@ public class VIPController : MonoBehaviour {
     public Gender Gender;
     public bool PlayerIsNoticed { get; private set; }
     public int ID;
+    public Material material;
     public Texture2D skin; 
 
 	// Use this for initialization
@@ -23,7 +25,7 @@ public class VIPController : MonoBehaviour {
 
         if(Vector3.Distance(transform.position, player.transform.position) <= distance && Input.GetKeyDown(KeyCode.LeftShift) && PlayerIsNoticed == false)
         {
-            player.GetComponent<PlayerControler>().changeIdentity(ID, skin, Gender);
+            player.GetComponent<PlayerControler>().changeIdentity(ID, material, Gender);
         }
     }
 

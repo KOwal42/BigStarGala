@@ -549,7 +549,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 142444}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.430969, y: 0.9162786, z: 1.4795742}
+  m_LocalPosition: {x: 2.086643, y: 0.9272785, z: 1.4663792}
   m_LocalScale: {x: 0.13, y: 0.13, z: 0.13}
   m_Children:
   - {fileID: 449006}
@@ -1028,6 +1028,11 @@ MonoBehaviour:
   Waypoints:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &11470786
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1041,8 +1046,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distance: 0.5
   Gender: 1
-  ID: 2
-  skin: {fileID: 2800000, guid: d057c9b42a4168b4bb4fc1ce96072324, type: 3}
+  ID: 1
+  materials:
+  - {fileID: 2100000, guid: 06af928a5b8b9a24daf1b669044081bd, type: 2}
+  - {fileID: 2100000, guid: 9e138c26401b14d49b0668deeed50767, type: 2}
+  - {fileID: 2100000, guid: 7a191185582dd0f41bb7286e5825ff68, type: 2}
+  - {fileID: 2100000, guid: ea1e3669686b87447b3b93c70eae4bf1, type: 2}
+  - {fileID: 2100000, guid: 31be3c3d90b428d40a02f8afdefc9e99, type: 2}
+  - {fileID: 2100000, guid: 4d96047e6aee7364396c71fd6db76ad1, type: 2}
+  - {fileID: 2100000, guid: 8bcd833ba12348d4e9d471431df1a615, type: 2}
+  - {fileID: 2100000, guid: 070a2d0944b80184e9cd94739ff5c250, type: 2}
+  skin: {fileID: 2800000, guid: 842ee5d79ee7f554487601ac9bc02559, type: 3}
 --- !u!114 &11491426
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1056,7 +1070,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IndicatorOffsetX: 50
   IndicatorOffsetY: 50
-  texture: {fileID: 0}
+  Eye: {fileID: 0}
   rate: 10000
 --- !u!136 &13684658
 CapsuleCollider:
@@ -1081,7 +1095,7 @@ SkinnedMeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 2100000, guid: ea1e3669686b87447b3b93c70eae4bf1, type: 2}
+  - {fileID: 2100000, guid: 070a2d0944b80184e9cd94739ff5c250, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1

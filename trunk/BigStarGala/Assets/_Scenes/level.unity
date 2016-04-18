@@ -1803,6 +1803,18 @@ Prefab:
       propertyPath: texture
       value: 
       objectReference: {fileID: 2800000, guid: 4b6bae286f77fbe40aebab4613372894, type: 3}
+    - target: {fileID: 11470786, guid: 903537d76f06ab648880032f14f39095, type: 2}
+      propertyPath: material
+      value: 
+      objectReference: {fileID: 2100000, guid: 94a03933ecbc78e4caec415a5635ac50, type: 2}
+    - target: {fileID: 13781238, guid: 903537d76f06ab648880032f14f39095, type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 94a03933ecbc78e4caec415a5635ac50, type: 2}
+    - target: {fileID: 11470786, guid: 903537d76f06ab648880032f14f39095, type: 2}
+      propertyPath: ID
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 903537d76f06ab648880032f14f39095, type: 2}
   m_IsPrefabParent: 0
@@ -2100,10 +2112,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 516762856}
     m_Modifications:
-    - target: {fileID: 11455686, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: Waypoints.Array.size
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 423564, guid: 903537d76f06ab648880032f14f39095, type: 2}
       propertyPath: m_LocalPosition.x
       value: 2.086643
@@ -2136,34 +2144,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 423564, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: m_LocalScale.x
-      value: 0.13
-      objectReference: {fileID: 0}
-    - target: {fileID: 423564, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: m_LocalScale.y
-      value: 0.13
-      objectReference: {fileID: 0}
-    - target: {fileID: 423564, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: m_LocalScale.z
-      value: 0.13
-      objectReference: {fileID: 0}
-    - target: {fileID: 13781238, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 070a2d0944b80184e9cd94739ff5c250, type: 2}
-    - target: {fileID: 11470786, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: skin
-      value: 
-      objectReference: {fileID: 2800000, guid: 842ee5d79ee7f554487601ac9bc02559, type: 3}
-    - target: {fileID: 11470786, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: distance
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 142444, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 11455686, guid: 903537d76f06ab648880032f14f39095, type: 2}
       propertyPath: Waypoints.Array.data[0]
       value: 
@@ -2193,13 +2173,17 @@ Prefab:
       value: 
       objectReference: {fileID: 831170045}
     - target: {fileID: 11470786, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: texture
+      propertyPath: material
       value: 
-      objectReference: {fileID: 2800000, guid: 4b6bae286f77fbe40aebab4613372894, type: 3}
+      objectReference: {fileID: 2100000, guid: ea1e3669686b87447b3b93c70eae4bf1, type: 2}
     - target: {fileID: 11470786, guid: 903537d76f06ab648880032f14f39095, type: 2}
-      propertyPath: ID
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: skin
+      value: 
+      objectReference: {fileID: 2800000, guid: d057c9b42a4168b4bb4fc1ce96072324, type: 3}
+    - target: {fileID: 13781238, guid: 903537d76f06ab648880032f14f39095, type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ea1e3669686b87447b3b93c70eae4bf1, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 903537d76f06ab648880032f14f39095, type: 2}
   m_IsPrefabParent: 0
@@ -8265,7 +8249,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: de36325226efd014ea7b8918dc09875a, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: de36325226efd014ea7b8918dc09875a, type: 3}
       propertyPath: m_LocalScale.x
@@ -8765,7 +8749,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 14f5c419fdf5d244983f3ae669a52aaa, type: 3}
       propertyPath: m_RootOrder
-      value: 13
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 14f5c419fdf5d244983f3ae669a52aaa, type: 3}
       propertyPath: m_Name
@@ -11747,10 +11731,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 516762856}
     m_Modifications:
-    - target: {fileID: 11477840, guid: 738cecced2f969748a56a1ab8c2681b1, type: 2}
-      propertyPath: Waypoints.Array.size
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 463024, guid: 738cecced2f969748a56a1ab8c2681b1, type: 2}
       propertyPath: m_LocalPosition.x
       value: 2.7656214
@@ -11783,10 +11763,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 186708, guid: 738cecced2f969748a56a1ab8c2681b1, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 11477840, guid: 738cecced2f969748a56a1ab8c2681b1, type: 2}
       propertyPath: Waypoints.Array.data[0]
       value: 
@@ -11816,9 +11792,9 @@ Prefab:
       value: 
       objectReference: {fileID: 831170045}
     - target: {fileID: 11495910, guid: 738cecced2f969748a56a1ab8c2681b1, type: 2}
-      propertyPath: texture
+      propertyPath: material
       value: 
-      objectReference: {fileID: 2800000, guid: 4b6bae286f77fbe40aebab4613372894, type: 3}
+      objectReference: {fileID: 2100000, guid: 250c7471ca355b14a8a7aa67f01c40a8, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 738cecced2f969748a56a1ab8c2681b1, type: 2}
   m_IsPrefabParent: 0

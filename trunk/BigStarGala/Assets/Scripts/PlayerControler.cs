@@ -10,7 +10,6 @@ public class PlayerControler : MonoBehaviour
     public float jumpSpeed = 8.0F;
     public float gravity = 20.0F;
     private Vector3 moveDirection = Vector3.zero;
-    private Texture2D texture;
     public Image EButton;
 
     public SkinnedMeshRenderer rendererMale;
@@ -160,7 +159,7 @@ public class PlayerControler : MonoBehaviour
         }
         #endregion
     }
-    public void changeIdentity(int ID, Texture2D texture, Gender gender)
+    public void changeIdentity(int ID, Material material, Gender gender)
     {
         if (gender == Gender.Male)
         {
@@ -168,8 +167,9 @@ public class PlayerControler : MonoBehaviour
             MaleModel.SetActive(true);
             playerMesh = MaleModel;
             animator = MaleModel.GetComponent<Animator>();
-            rendererMale.material.EnableKeyword("_DETAIL_MULX2");
-            rendererMale.material.SetTexture("_DetailAlbedoMap", texture);
+            rendererMale.material = material;
+            //rendererMale.material.EnableKeyword("_DETAIL_MULX2");
+            //rendererMale.material.SetTexture("_DetailAlbedoMap", texture);
         }
         else
         {
@@ -177,8 +177,9 @@ public class PlayerControler : MonoBehaviour
             FemaleModel.SetActive(true);
             playerMesh = FemaleModel;
             animator = FemaleModel.GetComponent<Animator>();
-            rendererFemale.material.EnableKeyword("_DETAIL_MULX2");
-            rendererFemale.material.SetTexture("_DetailAlbedoMap", texture);
+            rendererFemale.material = material;
+            //rendererFemale.material.EnableKeyword("_DETAIL_MULX2");
+            //rendererFemale.material.SetTexture("_DetailAlbedoMap", texture);
         }
         this.ID = ObjectCopier.Clone<int>(ID);
         Debug.Log(this.ID);
