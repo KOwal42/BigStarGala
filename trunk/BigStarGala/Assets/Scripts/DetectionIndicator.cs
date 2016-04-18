@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class DetectionIndicator : MonoBehaviour
 {
@@ -6,7 +7,8 @@ public class DetectionIndicator : MonoBehaviour
     public IndicatorState State { get; set; }
     public int IndicatorOffsetX;
     public int IndicatorOffsetY;
-    public Texture2D texture;
+
+    public Image Eye;
 
     public int rate;
 
@@ -15,11 +17,14 @@ public class DetectionIndicator : MonoBehaviour
     {
         Indicator = 0;
         State = IndicatorState.Decrement;
+        Eye.color = new Color(1,1,1,0);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (tag == "Player")
+            Eye.color = new Color(1, 1, 1, Indicator / 100.0f);
 
         //Debug.Log(gameObject.ToString() + "  Indicator = " + Indicator + "  IndicatorState = " + State);
         switch (State)
@@ -38,21 +43,6 @@ public class DetectionIndicator : MonoBehaviour
                         Indicator = 0;
                 }
                 break;
-        }
-
-    }
-
-    void OnGUI()
-    {
-
-        if (Indicator > 0 && gameObject.tag == "Player")
-        {
-            if (Camera.main != null)
-            {
-                Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);// gets screen position.
-                screenPosition.y = Screen.height - (screenPosition.y + 1);// inverts y
-                GUI.DrawTexture(new Rect(screenPosition.x - IndicatorOffsetX / 2, Screen.height - screenPosition.y - 10, Indicator, 25), texture);
-            }
         }
 
     }

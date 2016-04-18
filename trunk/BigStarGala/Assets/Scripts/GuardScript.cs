@@ -178,6 +178,7 @@ public class GuardScript : MonoBehaviour
         {
             if (Vector3.Distance(currentVIPPosition.position, transform.position) < 0.4f)
             {
+                GameObject.FindObjectOfType<GameMenuUiScript>().GameOver.enabled = true;
                 Time.timeScale = 0;
                 currentVIPPosition.GetComponent<PlayerControler>().enabled = false;
             } 
