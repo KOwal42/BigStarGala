@@ -14,6 +14,9 @@ public class PlayerControler : MonoBehaviour {
     public GameObject MaleModel;
     public GameObject FemaleModel;
 
+    public bool isActionActive;
+    public Texture2D EButtonTexture;
+
     public int ID { get; private set; }
     public float speed = 10.0F;
     public float rotationSpeed = 100.0F;
@@ -23,7 +26,7 @@ public class PlayerControler : MonoBehaviour {
     public int identity = 1;
     // Use this for initialization
     void Start () {
-
+        isActionActive = false;
         animator = GetComponentInChildren<Animator>();
     }
 	
@@ -98,7 +101,15 @@ public class PlayerControler : MonoBehaviour {
 
         #region = Special
 
-        
+        if(Input.GetKeyDown(KeyCode.E) && isActionActive)
+        {
+            switch(ID)
+            {
+                case 1: { animator.SetTrigger("TakingPhoto"); } break;
+                case 2: { animator.SetTrigger("RecievingStatue"); } break;
+                case 3: { animator.SetTrigger("Wave"); } break;
+            }
+        }
 
         #endregion
     }
@@ -122,5 +133,15 @@ public class PlayerControler : MonoBehaviour {
             rendererFemale.material.SetTexture("_DetailAlbedoMap", texture);
         }
         this.ID = ID;
+    }
+
+    void OnGUI()
+    {
+        if (Camera.main != null && isActionActive)
+        {
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);// gets screen position.
+            screenPosition.y = Screen.height - (screenPosition.y + 1);// inverts y
+            GUI.DrawTexture(new Rect(screenPosition.x - 20, Screen.height - screenPosition.y - 20, 40, 40), EButtonTexture);
+        }
     }
 }

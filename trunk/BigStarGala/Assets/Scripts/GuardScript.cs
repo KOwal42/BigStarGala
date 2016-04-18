@@ -187,7 +187,7 @@ public class GuardScript : MonoBehaviour
                             if (x.GetComponent<DetectionIndicator>().Indicator >= 100)
                             {
                                 currentVIPPosition = x.transform;
-                                if (!currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked)
+                                if (!currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked && currentVIPPosition.gameObject.GetComponent<VIPScript>().State != VIPState.BeingChecked)
                                 {
                                     currentVIPPosition.gameObject.GetComponent<VIPScript>().State = VIPState.BeingChecked;
                                     currentVIPPosition.gameObject.GetComponent<VIPScript>().guard = this.gameObject;

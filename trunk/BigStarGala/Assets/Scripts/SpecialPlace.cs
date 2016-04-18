@@ -1,15 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Assets.Scripts;
 
 public class SpecialPlace : MonoBehaviour {
 
+    public Vector3 Direction;
+    public float minTime;
+    public float maxTime;
 
     public int Id;
-    public string action;
-	// Use this for initialization
-	void Start () {
-	
-	}
+    public Vector3 Position { get; private set; }
+    public int IdRef { get; private set; }
+    public bool IsSomeone { get; private set; }
+    // Use this for initialization
+    void Start () {
+        IdRef = 0;
+        Position = transform.position;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -18,17 +25,49 @@ public class SpecialPlace : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.tag == "Player")
-            if (collider.GetComponent<PlayerControler>().ID == Id)
-                collider.GetComponent<PlayerControler>().animator.SetTrigger(action);
-
         if (collider.tag == "VIP")
+        {
+            IsSomeone = true;
             if (collider.GetComponent<VIPController>().ID == Id)
             {
-                collider.GetComponent<VIPScript>().animator.SetTrigger(action);
-                Debug.Log("DOING STUFFF");
                 collider.GetComponent<VIPScript>().State = VIPState.DoStuff;
             }
+        }
+        if (collider.tag == "Player" && collider.GetComponent<PlayerControler>().ID == Id)
+            collider.GetComponent<PlayerControler>().isActionActive = true;
+    }
+
+    void OnTriggerExit(Collider collider)
+    {
+        if (collider.tag == "VIP")
+        {
+            IdRef = 0;
+            IsSomeone = false;
+        }
+        if (collider.tag == "Player")
+            collider.GetComponent<PlayerControler>().isActionActive = false;
+    }
+
+    public void TurnTo(GameObject go)
+    {
+        if (Direction != Vector3.zero)
+        {
+            go.transform.rotation = Quaternion.Slerp(
+                go.transform.rotation,
+                Quaternion.LookRotation(Direction),
+                Time.deltaTime * 5);
+        }
+    }
+
+    public float RandomizeTime()
+    {
+        return Random.Range(minTime, maxTime);
+    }
+
+
+    public void SetMyId(int Id)
+    {
+        IdRef = ObjectCopier.Clone<int>(Id);
     }
 }
 

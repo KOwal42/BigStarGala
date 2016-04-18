@@ -47,7 +47,7 @@ public class DetectionIndicator : MonoBehaviour
 
         if (Indicator > 0 && gameObject.tag == "Player")
         {
-            if (Camera.current != null)
+            if (Camera.main != null)
             {
                 Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);// gets screen position.
                 screenPosition.y = Screen.height - (screenPosition.y + 1);// inverts y

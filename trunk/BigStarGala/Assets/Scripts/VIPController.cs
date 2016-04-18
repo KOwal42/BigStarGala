@@ -41,7 +41,6 @@ public class VIPController : MonoBehaviour {
             PlayerIsNoticed = false;
         }
     }
-    
 }
 
 

@@ -6,14 +6,15 @@ public class VIPScript : MonoBehaviour
 
     private float timeSinceLastChecked;
     private NavMeshAgent agent;
-    private int waypointIndex;
+    private int currentIndex;
     private bool coroutineStareted;
     public Animator animator;
+    private bool setPath;
 
     public GameObject guard;
     public VIPState State { get; set; }
     public float CoolDown;
-    public Transform[] Waypoints;
+    public SpecialPlace[] Waypoints;
     public bool IsChecked { get; set; }
 
     // Use this for initialization
@@ -35,38 +36,58 @@ public class VIPScript : MonoBehaviour
         {
             case VIPState.Walking:
                 {
-                    agent.Resume();
-                    animator.SetFloat("Speed", 10);
-                    if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
+                    if (Waypoints.Length > 1)
                     {
-                        waypointIndex++;
-                        if (waypointIndex > Waypoints.Length - 1)
-                            waypointIndex = 0;
-                        agent.SetDestination(Waypoints[waypointIndex].position);
+                        animator.SetFloat("Speed", 10);
+                        agent.Resume();
+
+                        while (CheckIfAvaible(currentIndex) && Waypoints[currentIndex].IdRef != GetComponent<VIPController>().ID)
+                        {
+                            currentIndex = RandomizeWaypoint();
+                            setPath = true;
+                        }
+
+                        if (setPath)
+                        {
+                            Waypoints[currentIndex].SetMyId(GetComponent<VIPController>().ID);
+                            agent.SetDestination(Waypoints[currentIndex].transform.position);
+                            setPath = false;
+                        }
+
+                        if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
+                            State = VIPState.Wait;
                     }
+                    else
+                    {
+                        agent.SetDestination(Waypoints[0].transform.position);
+                    }
+                }
+                break;
+            case VIPState.Wait:
+                {
+                    if (!coroutineStareted)
+                        StartCoroutine(wait());
+                    TurnTo(Waypoints[currentIndex].Direction);
                 }
                 break;
             case VIPState.BeingChecked:
                 {
                     agent.Stop();
+                    animator.SetFloat("Speed", 0);
                     Vector3 dir = guard.transform.position - transform.position;
-                    if (dir != Vector3.zero)
-                    {
-                        transform.rotation = Quaternion.Slerp(
-                            transform.rotation,
-                            Quaternion.LookRotation(dir),
-                            Time.deltaTime * 10);
-                    }
+                    TurnTo(dir);
                     if (!coroutineStareted && Vector3.Distance(guard.transform.position, transform.position) < 0.5f)
                         StartCoroutine(BeingChecked());
                 }
                 break;
             case VIPState.DoStuff:
                 {
-                    agent.Stop();
+                    Debug.Log("DO Stuff");
+                    if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
+                        if (!coroutineStareted)
+                            StartCoroutine(DoStuff());
                     animator.SetFloat("Speed", 0);
-                    if(!coroutineStareted)
-                        StartCoroutine(DoStuff());
+                    TurnTo(Waypoints[currentIndex].GetComponent<SpecialPlace>().Direction);
                 }
                 break;
         }
@@ -96,9 +117,52 @@ public class VIPScript : MonoBehaviour
     IEnumerator DoStuff()
     {
         coroutineStareted = true;
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(2);
+        for (int i = 0; i < 4; i++)
+        {
+            switch (GetComponent<VIPController>().ID)
+            {
+                case 1: { animator.SetTrigger("TakingPhoto"); } break;
+                case 2: { animator.SetTrigger("RecievingStatue"); } break;
+                case 3: { animator.SetTrigger("Wave"); } break;
+            }
+            yield return new WaitForSeconds(2);
+        }
         State = VIPState.Walking;
         coroutineStareted = false;
+    }
+
+    bool CheckIfAvaible(int i)
+    {
+        return Waypoints[i].IsSomeone;
+    }
+
+    int RandomizeWaypoint()
+    {
+        return UnityEngine.Random.Range(0, Waypoints.Length);
+    }
+
+    IEnumerator wait()
+    {
+        coroutineStareted = true;
+        animator.SetFloat("Speed", 0);
+        Debug.Log("Czekanie");
+        yield return new WaitForSeconds(Waypoints[currentIndex].RandomizeTime());
+        currentIndex = RandomizeWaypoint();
+        agent.SetDestination(Waypoints[currentIndex].transform.position);
+        State = VIPState.Walking;
+        coroutineStareted = false;
+    }
+
+    void TurnTo(Vector3 direction)
+    {
+        if (direction != Vector3.zero)
+        {
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                Quaternion.LookRotation(direction),
+                Time.deltaTime * 10);
+        }
     }
 }
 
@@ -106,5 +170,6 @@ public enum VIPState
 {
     Walking,
     DoStuff,
-    BeingChecked
+    BeingChecked,
+    Wait
 }
