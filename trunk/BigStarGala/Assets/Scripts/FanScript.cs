@@ -26,7 +26,7 @@ public class FanScript : MonoBehaviour {
 
         if (currentCooldown < delta)
         {
-            Debug.Log(currentCooldown + delta);
+            //Debug.Log(currentCooldown + delta);
             animator.SetTrigger("Jump");
             currentCooldown = Random.Range(JumpCooldownDown, JumpCooldownUp);
             delta = 0;

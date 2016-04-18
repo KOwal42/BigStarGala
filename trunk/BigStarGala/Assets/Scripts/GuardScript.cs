@@ -5,22 +5,23 @@ using System;
 
 public class GuardScript : MonoBehaviour
 {
-    private Dictionary<StateTransition, GuardState> transitions;
     private NavMeshAgent agent;
     private int waypointIndex;
+    private int currentIndex;
     private Transform currentVIPPosition;
-    private bool isCheckingID;
-    private bool isWaiting;
+    private bool coroutineInProgress;
     private List<GameObject> peopleInRange;
     private Animator animator;
     private bool isPlayerInSight;
     private Plane[] planes;
     private GameObject player;
     private CapsuleCollider playerCollider;
+    private bool setPath;
+    private Vector3 lastSeen;
 
-    public Camera camera;
-    public Transform[] Waypoints;
-    public int waitingTime;
+    public new Camera camera;
+    public int Id;
+    public Waypoint[] Waypoints;
     public GuardState CurrentState { get; private set; }
 
     // Use this for initialization
@@ -30,73 +31,80 @@ public class GuardScript : MonoBehaviour
         CurrentState = GuardState.Patrol;
         agent = this.GetComponent<NavMeshAgent>();
         waypointIndex = 0;
-        agent.SetDestination(Waypoints[waypointIndex].position);
-        isCheckingID = false;
-        isWaiting = false;
+        if (Waypoints.Length > 1)
+        {
+            currentIndex = RandomizeWaypoint();
+            agent.SetDestination(Waypoints[currentIndex].transform.position);
+        }
+        else
+        {
+            agent.SetDestination(Waypoints[0].transform.position);
+        }
+        coroutineInProgress = false;
         player = GameObject.FindWithTag("Player");
         playerCollider = player.GetComponent<CapsuleCollider>();
         planes = GeometryUtility.CalculateFrustumPlanes(camera);
         animator = GetComponentInChildren<Animator>();
-
-        transitions = new Dictionary<StateTransition, GuardState>
-            {
-                { new StateTransition(GuardState.Patrol, Command.SeeVIP), GuardState.CheckID },
-                { new StateTransition(GuardState.Patrol, Command.Rest), GuardState.Wait },
-                { new StateTransition(GuardState.Wait, Command.SeeVIP), GuardState.CheckID },
-                { new StateTransition(GuardState.Wait, Command.GetBack), GuardState.Patrol },
-                { new StateTransition(GuardState.CheckID, Command.GetBack), GuardState.Patrol },
-                { new StateTransition(GuardState.CheckID, Command.Rest), GuardState.Wait }
-            };
     }
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log("name: " + name + "   currentWaypoint: " + currentIndex + "   Waypoint IDref: " + Waypoints[currentIndex].IdRef + "  Id: " + Id + "   Destination: " + agent.destination + "  pathStatus: " + agent.pathStatus + "    remainingDistance: " + agent.remainingDistance);
         switch (CurrentState)
         {
             case GuardState.Patrol:
                 {
-                    agent.Resume();
-                    animator.SetFloat("Speed", 10);
-                    if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
+                    if (Waypoints.Length > 1)
                     {
-                        isWaiting = false;
-                        waypointIndex++;
-                        if (waypointIndex > Waypoints.Length - 1)
-                            waypointIndex = 0;
-                        MoveNext(Command.Rest);
+                        animator.SetFloat("Speed", 10);
+                        agent.Resume();
+
+                        while (CheckIfAvaible(currentIndex) && Waypoints[currentIndex].IdRef != Id)
+                        {
+                            currentIndex = RandomizeWaypoint();
+                            setPath = true;
+                        }
+
+                        if (setPath)
+                        {
+                            Waypoints[currentIndex].SetMyId(Id);
+                            agent.SetDestination(Waypoints[currentIndex].transform.position);
+                            setPath = false;
+                        }
+
+                        if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance < 0.15f)
+                            CurrentState = GuardState.Wait;
+                    }
+                    else
+                    {
+                        agent.SetDestination(Waypoints[0].transform.position);
                     }
                     observe();
                 }
                 break;
             case GuardState.Wait:
                 {
-                    if (!isWaiting)
+                    if (!coroutineInProgress)
                         StartCoroutine(wait());
+                    TurnTo(Waypoints[currentIndex].Direction);
+                    observe();
                 }
                 break;
             case GuardState.CheckID:
                 {
                     agent.SetDestination(currentVIPPosition.position);
-                    
+
                     if (agent.remainingDistance < 0.4f)
                     {
                         agent.Stop();
-
-                        Debug.Log(agent.remainingDistance  +  "   " + isCheckingID);
-                        if (!isCheckingID)
+                        if (!coroutineInProgress)
                         {
-                            isCheckingID = true;
                             StartCoroutine(CheckID());
                         }
                     }
+
                     Vector3 dir = currentVIPPosition.transform.position - transform.position;
-                    if (dir != Vector3.zero)
-                    {
-                        transform.rotation = Quaternion.Slerp(
-                            transform.rotation,
-                            Quaternion.LookRotation(dir),
-                            Time.deltaTime * 5);
-                    }
+                    TurnTo(dir);
                 }
                 break;
         }
@@ -122,9 +130,9 @@ public class GuardScript : MonoBehaviour
 
     void OnTriggerStay(Collider collider)
     {
-        if(collider.tag == "Player")
+        if (collider.tag == "Player")
         {
-            if(seePlayer())
+            if (seePlayer())
                 player.GetComponent<DetectionIndicator>().State = IndicatorState.Increment;
             else
                 player.GetComponent<DetectionIndicator>().State = IndicatorState.Decrement;
@@ -134,7 +142,7 @@ public class GuardScript : MonoBehaviour
 
     void OnTriggerExit(Collider collider)
     {
-        if ((collider.gameObject.tag == "Player" && seePlayer())|| collider.gameObject.tag == "VIP")
+        if ((collider.gameObject.tag == "Player" && seePlayer()) || collider.gameObject.tag == "VIP")
         {
             collider.gameObject.GetComponent<DetectionIndicator>().State = IndicatorState.Decrement;
             if (peopleInRange.Contains(collider.gameObject))
@@ -143,63 +151,27 @@ public class GuardScript : MonoBehaviour
     }
 
 
-    GuardState GetNext(Command command)
-    {
-        StateTransition transition = new StateTransition(CurrentState, command);
-        GuardState nextState;
-        if (!transitions.TryGetValue(transition, out nextState))
-            throw new Exception("Invalid transition: " + CurrentState + " -> " + command);
-        return nextState;
-    }
-
-    class StateTransition
-    {
-        readonly GuardState CurrentState;
-        readonly Command Command;
-
-        public StateTransition(GuardState currentState, Command command)
-        {
-            CurrentState = currentState;
-            Command = command;
-        }
-
-        public override int GetHashCode()
-        {
-            return 17 + 31 * CurrentState.GetHashCode() + 31 * Command.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            StateTransition other = obj as StateTransition;
-            return other != null && this.CurrentState == other.CurrentState && this.Command == other.Command;
-        }
-    }
-
-    GuardState MoveNext(Command command)
-    {
-        CurrentState = GetNext(command);
-        return CurrentState;
-    }
 
     IEnumerator CheckID()
     {
+        coroutineInProgress = true;
         animator.SetFloat("Speed", 0);
         if (currentVIPPosition.gameObject.tag == "VIP")
         {
             currentVIPPosition.gameObject.GetComponent<VIPScript>().IsChecked = true;
             yield return new WaitForSeconds(3);
-            MoveNext(Command.GetBack);
-            agent.SetDestination(Waypoints[waypointIndex].position);
-            isCheckingID = false;
+            CurrentState = GuardState.Patrol;
+            agent.SetDestination(Waypoints[currentIndex].transform.position);
         }
-        else if(currentVIPPosition.gameObject.tag == "Player")
+        else if (currentVIPPosition.gameObject.tag == "Player")
         {
-            if(Vector3.Distance(currentVIPPosition.position, transform.position) < 0.4f)
+            lastSeen = currentVIPPosition.position;
+            if (Vector3.Distance(currentVIPPosition.position, transform.position) < 0.4f)
             {
                 currentVIPPosition.GetComponent<PlayerControler>().enabled = false;
             }
         }
-        
+        coroutineInProgress = false;
     }
 
     void observe()
@@ -219,7 +191,7 @@ public class GuardScript : MonoBehaviour
                                 {
                                     currentVIPPosition.gameObject.GetComponent<VIPScript>().State = VIPState.BeingChecked;
                                     currentVIPPosition.gameObject.GetComponent<VIPScript>().guard = this.gameObject;
-                                    MoveNext(Command.SeeVIP);
+                                    CurrentState = GuardState.CheckID;
                                 }
                             }
                         }
@@ -229,7 +201,7 @@ public class GuardScript : MonoBehaviour
                             if (x.GetComponent<DetectionIndicator>().Indicator >= 100)
                             {
                                 currentVIPPosition = x.transform;
-                                MoveNext(Command.SeeVIP);
+                                CurrentState = GuardState.CheckID;
                             }
                         }
                         break;
@@ -247,7 +219,6 @@ public class GuardScript : MonoBehaviour
             Ray ray = new Ray(transform.position, player.transform.position - transform.position);
             if (Physics.Raycast(ray, out hit))
             {
-                Debug.Log(hit.ToString());
                 if (hit.collider.tag == "Player")
                     return true;
                 else
@@ -261,11 +232,35 @@ public class GuardScript : MonoBehaviour
 
     IEnumerator wait()
     {
-        isWaiting = true;
+        coroutineInProgress = true;
         animator.SetFloat("Speed", 0);
-        yield return new WaitForSeconds(waitingTime);
-        MoveNext(Command.GetBack);
-        agent.SetDestination(Waypoints[waypointIndex].position);
+        Debug.Log("Czekanie");
+        yield return new WaitForSeconds(Waypoints[currentIndex].RandomizeTime());
+        currentIndex = RandomizeWaypoint();
+        agent.SetDestination(Waypoints[currentIndex].transform.position);
+        CurrentState = GuardState.Patrol;
+        coroutineInProgress = false;
+    }
+
+    int RandomizeWaypoint()
+    {
+        return UnityEngine.Random.Range(1, Waypoints.Length);
+    }
+
+    bool CheckIfAvaible(int i)
+    {
+        return Waypoints[i].IsSomeone;
+    }
+
+    void TurnTo(Vector3 direction)
+    {
+        if (direction != Vector3.zero)
+        {
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                Quaternion.LookRotation(direction),
+                Time.deltaTime * 5);
+        }
     }
 }
 
@@ -275,11 +270,4 @@ public enum GuardState
     Patrol,
     Wait,
     CheckID
-}
-
-public enum Command
-{
-    Rest,
-    GetBack,
-    SeeVIP
 }

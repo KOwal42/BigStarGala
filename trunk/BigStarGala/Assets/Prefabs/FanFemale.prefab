@@ -130,6 +130,8 @@ GameObject:
   - 4: {fileID: 441740}
   - 95: {fileID: 9506890}
   - 114: {fileID: 11414202}
+  - 136: {fileID: 13650886}
+  - 208: {fileID: 20894412}
   m_Layer: 0
   m_Name: FanFemale
   m_TagString: Untagged
@@ -625,8 +627,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 121776}
-  m_LocalRotation: {x: 0, y: 0.0042522456, z: 0, w: 0.999991}
-  m_LocalPosition: {x: 5.4955482, y: -2.46, z: -2.8411515}
+  m_LocalRotation: {x: 0, y: 0.9570059, z: 0, w: -0.2900684}
+  m_LocalPosition: {x: -2.9143815, y: 0.018603086, z: 5.911693}
   m_LocalScale: {x: 0.14, y: 0.14, z: 0.14}
   m_Children:
   - {fileID: 422080}
@@ -816,6 +818,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   JumpCooldownUp: 0
   JumpCooldownDown: 3
+--- !u!136 &13650886
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 121776}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2.96
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.72, z: 0}
 --- !u!137 &13740350
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -826,7 +841,7 @@ SkinnedMeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 2100000, guid: a615f1c3b30087748bdb240445f4e434, type: 2}
+  - {fileID: 2100000, guid: fd12b39e2c6cf724ea404c3824da9014, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
@@ -876,6 +891,21 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.45374858, y: -0.03548324, z: -0.043616235}
     m_Extent: {x: 1.6641616, y: 0.9863752, z: 0.5734294}
   m_DirtyAABB: 0
+--- !u!208 &20894412
+NavMeshObstacle:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 121776}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.37, y: 1.23, z: 0.385}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.86, z: 0.08}
+  m_TimeToStationary: 0.5
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
