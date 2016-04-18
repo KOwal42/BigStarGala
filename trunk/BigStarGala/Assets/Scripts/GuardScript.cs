@@ -8,7 +8,7 @@ public class GuardScript : MonoBehaviour
     private NavMeshAgent agent;
     private int waypointIndex;
     private int currentIndex;
-    private Transform currentVIPPosition;
+    public Transform currentVIPPosition;
     private bool coroutineInProgress;
     private List<GameObject> peopleInRange;
     private Animator animator;
@@ -22,7 +22,7 @@ public class GuardScript : MonoBehaviour
     public new Camera camera;
     public int Id;
     public Waypoint[] Waypoints;
-    public GuardState CurrentState { get; private set; }
+    public GuardState CurrentState { get; set; }
 
     // Use this for initialization
     void Start()
@@ -92,7 +92,10 @@ public class GuardScript : MonoBehaviour
                 break;
             case GuardState.CheckID:
                 {
-                    agent.SetDestination(currentVIPPosition.position);
+                    if(currentVIPPosition.tag == "VIP")
+                        agent.SetDestination(currentVIPPosition.position);
+                    else
+                        agent.SetDestination(lastSeen);
 
                     if (agent.remainingDistance < 0.4f)
                     {
@@ -103,8 +106,16 @@ public class GuardScript : MonoBehaviour
                         }
                     }
 
-                    Vector3 dir = currentVIPPosition.transform.position - transform.position;
-                    TurnTo(dir);
+                    if (currentVIPPosition.tag == "VIP")
+                    {
+                        Vector3 dir = currentVIPPosition.transform.position - transform.position;
+                        TurnTo(dir);
+                    } else
+                    {
+                        Vector3 dir = lastSeen - transform.position;
+                        TurnTo(dir);
+                    }
+
                 }
                 break;
         }
@@ -165,11 +176,10 @@ public class GuardScript : MonoBehaviour
         }
         else if (currentVIPPosition.gameObject.tag == "Player")
         {
-            lastSeen = currentVIPPosition.position;
             if (Vector3.Distance(currentVIPPosition.position, transform.position) < 0.4f)
             {
                 currentVIPPosition.GetComponent<PlayerControler>().enabled = false;
-            }
+            } 
         }
         coroutineInProgress = false;
     }
@@ -220,7 +230,10 @@ public class GuardScript : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider.tag == "Player")
+                {
+                    lastSeen = hit.transform.position;
                     return true;
+                } 
                 else
                     return false;
             }
