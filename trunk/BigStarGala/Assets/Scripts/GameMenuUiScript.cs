@@ -14,11 +14,13 @@ public class GameMenuUiScript : MonoBehaviour {
 
     public Image buttonImage;
     public Image GameOver;
+    public Image Victory;
 
     public Canvas[] Canvases;
     // Use this for initialization
     void Start () {
         GameOver.enabled = false;
+        Victory.enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -31,6 +33,11 @@ public class GameMenuUiScript : MonoBehaviour {
         {
             Time.timeScale = 1;
             SceneManager.LoadScene(0);
+        }
+
+        if(VictoryConditionManager.photo && VictoryConditionManager.wave && VictoryConditionManager.statue)
+        {
+            Victory.enabled = true;
         }
 
     }
