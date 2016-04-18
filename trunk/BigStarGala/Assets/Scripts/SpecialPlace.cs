@@ -33,7 +33,7 @@ public class SpecialPlace : MonoBehaviour {
                 collider.GetComponent<VIPScript>().State = VIPState.DoStuff;
             }
         }
-        if (collider.tag == "Player" && collider.GetComponent<PlayerControler>().ID == Id)
+        if (collider.tag == "Player" && collider.GetComponent<PlayerControler>().ID == Id && Id != 0)
             collider.GetComponent<PlayerControler>().isActionActive = true;
     }
 

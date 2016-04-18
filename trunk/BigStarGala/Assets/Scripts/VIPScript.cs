@@ -105,7 +105,6 @@ public class VIPScript : MonoBehaviour
     IEnumerator BeingChecked()
     {
         coroutineStareted = true;
-        animator.SetFloat("Speed", 0f);
         animator.SetTrigger("Explain");
         yield return new WaitForSeconds(1.5f);
         animator.SetTrigger("Explain");
@@ -146,7 +145,6 @@ public class VIPScript : MonoBehaviour
     {
         coroutineStareted = true;
         animator.SetFloat("Speed", 0);
-        Debug.Log("Czekanie");
         yield return new WaitForSeconds(Waypoints[currentIndex].RandomizeTime());
         currentIndex = RandomizeWaypoint();
         agent.SetDestination(Waypoints[currentIndex].transform.position);

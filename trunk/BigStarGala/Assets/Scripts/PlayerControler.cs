@@ -1,13 +1,17 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using Assets.Scripts;
+using System.Collections.Generic;
 
-public class PlayerControler : MonoBehaviour {
+public class PlayerControler : MonoBehaviour
+{
 
     public float jumpSpeed = 8.0F;
     public float gravity = 20.0F;
     private Vector3 moveDirection = Vector3.zero;
     private Texture2D texture;
+    public Image EButton;
 
     public SkinnedMeshRenderer rendererMale;
     public SkinnedMeshRenderer rendererFemale;
@@ -16,8 +20,10 @@ public class PlayerControler : MonoBehaviour {
     public GameObject FemaleModel;
 
     public bool isActionActive;
-    public Texture2D EButtonTexture;
     public float cooldown;
+
+    public List<GameObject> Audio;
+    public List<GameObject> Particles;
 
     public int ID { get; private set; }
     public float speed = 10.0F;
@@ -28,15 +34,17 @@ public class PlayerControler : MonoBehaviour {
     public int identity = 1;
     private float delta;
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         isActionActive = false;
+        EButton.enabled = false;
         animator = GetComponentInChildren<Animator>();
         cooldown = 3;
         delta = 0;
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
         delta += Time.deltaTime;
         #region = Movement
@@ -52,7 +60,7 @@ public class PlayerControler : MonoBehaviour {
         moveDirection.y -= gravity * Time.deltaTime;
         controller.Move(moveDirection * Time.deltaTime);
 
-        
+
         if (Input.GetKey("w") && Input.GetKey("d"))
         {
             playerMesh.transform.rotation = Quaternion.Lerp(playerMesh.transform.rotation, new Quaternion(0, -0.9f, 0, -0.3f), Time.deltaTime * 10f);
@@ -106,23 +114,55 @@ public class PlayerControler : MonoBehaviour {
 
         #region = Special
 
-        if(Input.GetKeyDown(KeyCode.E) && isActionActive && delta > cooldown)
+        if (delta > cooldown)
         {
-            Debug.Log("Przed kliknięciem: " + ID);
-            delta = 0;
-            switch(ID)
+            foreach (GameObject x in Particles)
+                x.SetActive(false);
+            if (isActionActive)
             {
-                case 1: { animator.SetTrigger("TakingPhoto");  VictoryConditionManager.UpdateAction(1); } break;
-                case 2: { animator.SetTrigger("RecievingStatue"); VictoryConditionManager.UpdateAction(2); } break;
-                case 3: { animator.SetTrigger("Wave"); VictoryConditionManager.UpdateAction(3); } break;
+                EButton.enabled = true;
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    delta = 0;
+                    switch (ID)
+                    {
+                        case 1:
+                            {
+                                animator.SetTrigger("TakingPhoto");
+                                Audio[0].GetComponent<AudioSource>().Play();
+                                Particles[0].SetActive(true);
+                                Particles[1].SetActive(true);
+                                VictoryConditionManager.UpdateAction(1);
+                            }
+                            break;
+                        case 2:
+                            {
+                                animator.SetTrigger("RecievingStatue");
+                                Audio[1].GetComponent<AudioSource>().Play();
+                                Particles[2].SetActive(true);
+                                VictoryConditionManager.UpdateAction(2);
+                            }
+                            break;
+                        case 3:
+                            {
+                                animator.SetTrigger("Wave");
+                                Audio[2].GetComponent<AudioSource>().Play();
+                                Audio[3].GetComponent<AudioSource>().Play();
+                                Particles[3].SetActive(true);
+                                VictoryConditionManager.UpdateAction(3);
+                            }
+                            break;
+                    }
+                }
             }
+            else
+                EButton.enabled = false;
         }
-
         #endregion
     }
     public void changeIdentity(int ID, Texture2D texture, Gender gender)
     {
-        if( gender == Gender.Male )
+        if (gender == Gender.Male)
         {
             FemaleModel.SetActive(false);
             MaleModel.SetActive(true);
@@ -130,7 +170,8 @@ public class PlayerControler : MonoBehaviour {
             animator = MaleModel.GetComponent<Animator>();
             rendererMale.material.EnableKeyword("_DETAIL_MULX2");
             rendererMale.material.SetTexture("_DetailAlbedoMap", texture);
-        } else
+        }
+        else
         {
             MaleModel.SetActive(false);
             FemaleModel.SetActive(true);
@@ -140,14 +181,6 @@ public class PlayerControler : MonoBehaviour {
             rendererFemale.material.SetTexture("_DetailAlbedoMap", texture);
         }
         this.ID = ObjectCopier.Clone<int>(ID);
-        Debug.Log(this.ID); 
-    }
-
-    void OnGUI()
-    {
-        if (Camera.main != null && isActionActive && delta > cooldown)
-        {
-            GUI.Box(new Rect(Screen.width/2 - 20, Screen.height/2 - 20, 40, 40), EButtonTexture);
-        }
+        Debug.Log(this.ID);
     }
 }
